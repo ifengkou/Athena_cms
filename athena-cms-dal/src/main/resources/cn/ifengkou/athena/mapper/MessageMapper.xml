@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.MessageDao">
+
+    <resultMap id="masterResultMap" type="cn.ifengkou.athena.model.User">
+        <result column="master_id"  property="id"/>
+        <result column="master_name" property="name"/>
+        <result column="master_loginName" property="loginName"/>
+        <result column="master_email" property="email"/>
+    </resultMap>
+
+    <resultMap id="authorResultMap" type="cn.ifengkou.athena.model.User">
+        <result column="author_id" property="id"/>
+        <result column="author_name" property="name"/>
+        <result column="author_loginName" property="loginName"/>
+        <result column="author_email" property="email"/>
+    </resultMap>
+
+    <resultMap id="topicResultMap" type="cn.ifengkou.athena.model.Topic">
+        <result column="topic_id" property="id"/>
+        <result column="topic_title" property="title"/>
+    </resultMap>
+
+    <resultMap id="replyResultMap" type="cn.ifengkou.athena.model.Reply">
+        <result column="reply_id" property="id"/>
+        <result column="reply_content" property="content"/>
+    </resultMap>
+
+    <resultMap id="ResultMap" type="cn.ifengkou.athena.model.Message">
+        <result column="id" property="id"/>
+        <result column="type" property="type"/>
+        <result column="masterId" property="masterId"/>
+        <result column="authorId" property="authorId"/>
+        <result column="topicId" property="topicId"/>
+        <result column="replyId" property="replyId"/>
+        <result column="hasRead" property="hasRead"/>
+        <result column="createAt" property="createAt" javaType="java.util.Date"/>
+        <association property="master" javaType="cn.ifengkou.athena.model.User" resultMap="masterResultMap"/>
+        <association property="author" javaType="cn.ifengkou.athena.model.User" resultMap="authorResultMap"/>
+        <association property="topic" javaType="cn.ifengkou.athena.model.Topic" resultMap="topicResultMap"/>
+        <association property="reply" javaType="cn.ifengkou.athena.model.Reply" resultMap="replyResultMap"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,"type",masterId,authorId,topicId,replyId,hasRead,createAt
+    </sql>
+    <select id="getMessagesCount" resultType="int" parameterType="long">
+        SELECT count(*) from message where masterId = #{id}
+    </select>
+
+    <!--查询未读消息-->
+    <select id="getUnreadMessageByUserId" resultType="cn.ifengkou.athena.model.Message" parameterType="long">
+        SELECT <include refid="Base_Column_List"/>
+        from message where masterId = #{masterId} and hasRead=0
+    </select>
+
+    <!--查询已读消息-->
+    <select id="getReadMessagesByUserId" resultType="cn.ifengkou.athena.model.Message" parameterType="long">
+        SELECT <include refid="Base_Column_List"/>
+        from message where masterId = #{masterId} and hasRead=1
+    </select>
+
+    <!-- 根据主键修改记录 -->
+    <update id="updateMessagesToRead" parameterType="Object">
+        update message set hasRead=1 where userid =#{userId} and id in
+        <foreach item="item" index="index" collection="messages" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--获取Message-->
+    <select id="get" resultMap="ResultMap" parameterType="long">
+        select m.id,m.type,m.masterId,m.authorId,m.replyId,m.topicId,m.hasRead,m.createAt
+        ,s.id as master_id,s.name as master_name,s.loginname as master_loginName,s.email as master_email
+        ,a.id as author_id,a.name as author_name,a.loginname as author_loginName,a.email as author_email
+        ,t.id as topic_id,t.title as topic_title
+        ,r.id as reply_id,r.content as reply_content
+        from message m ,user s,user a ,topic t,reply r
+        where m.id=#{id} and m.masterid = s.id and m.authorid = a.id and m.topicId = t.id and m.replyId = r.replyId
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        message(id,type,masterId,authorId,topicId,replyId,hasRead,createAt)
+        values(#{id},#{type},#{masterId},#{authorId},#{topicId},#{replyId},false,now())
+    </insert>
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="Object">
+        delete from message where id= #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d %p [%c] - &lt;%m&gt;%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+	<!-- show sql -->
+	<logger name="cn.ifengkou.athena.dal" level="DEBUG"/>
+</configuration>

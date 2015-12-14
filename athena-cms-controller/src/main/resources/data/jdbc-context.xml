@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	">
+    <!-- production环境 -->
+    <!--<beans profile="production">-->
+    <beans>
+        <context:property-placeholder location="classpath*:/data/config.properties" ignore-unresolvable="true"/>
+        <!--<tx:annotation-driven transaction-manager="transactionManager" />-->
+
+        <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+            <!--<property name="driverClassName" value="${doris_jdbc.driverClassName}"/>-->
+            <property name="url" value="${doris_jdbc.url}"/>
+            <property name="username" value="${doris_jdbc.username}"/>
+            <property name="password" value="${doris_jdbc.password}"/>
+
+            <property name="initialSize" value="${doris_jdbc.initialSize}"/>
+            <property name="minIdle" value="${doris_jdbc.minIdle}"/>
+            <property name="maxActive" value="${doris_jdbc.maxActive}"/>
+
+            <property name="timeBetweenEvictionRunsMillis" value="${doris_jdbc.timeBetweenEvictionRunsMillis}"/>
+            <property name="minEvictableIdleTimeMillis" value="${doris_jdbc.minEvictableIdleTimeMillis}"/>
+
+            <property name="validationQuery" value="${doris_jdbc.validationQuery}"/>
+            <property name="testWhileIdle" value="${doris_jdbc.testWhileIdle}"/>
+            <property name="testOnBorrow" value="${doris_jdbc.testOnBorrow}"/>
+            <property name="testOnReturn" value="${doris_jdbc.testOnReturn}"/>
+            <property name="maxOpenPreparedStatements" value="${doris_jdbc.maxOpenPreparedStatements}"/>
+            <property name="removeAbandoned" value="${doris_jdbc.removeAbandoned}"/>
+            <property name="removeAbandonedTimeout" value="${doris_jdbc.removeAbandonedTimeout}"/>
+            <property name="logAbandoned" value="${doris_jdbc.logAbandoned}"/>
+
+            <property name="filters" value="${doris_jdbc.filtes}"/>
+        </bean>
+    </beans>
+
+</beans>

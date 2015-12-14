@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.UpsDao">
+
+    <sql id="Base_Column_List">
+        id,replyId,userId
+    </sql>
+
+    <select id="getUpsByReplyIdAndUserId" resultType="cn.ifengkou.athena.model.Ups" parameterType="Object">
+        SELECT <include refid="Base_Column_List"/>
+        from ups where replyId=#{replyId} and userId=#{userId}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        Ups(id,replyId,userId)
+        values(#{id},#{replyId},#{userId})
+    </insert>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="long">
+        delete from Ups where id=#{id}
+    </delete>
+</mapper>

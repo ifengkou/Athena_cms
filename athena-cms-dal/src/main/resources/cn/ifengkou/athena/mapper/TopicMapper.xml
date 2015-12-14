@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.TopicDao">
+
+    <resultMap id="authorResultMap" type="cn.ifengkou.athena.model.User">
+        <result column="author_loginName" property="loginName"/>
+        <result column="author_avatar" property="avatar"/>
+    </resultMap>
+
+    <resultMap id="ResultMap" type="cn.ifengkou.athena.model.Topic">
+        <result column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="authorId" property="authorId"/>
+        <result column="top" property="top"/>
+        <result column="good" property="good"/>
+        <result column="replyCount" property="replyCount"/>
+        <result column="visitCount" property="visitCount"/>
+        <result column="collectCount" property="collectCount"/>
+        <result column="lastReplyAt" property="lastReplyAt" javaType="java.util.Date"/>
+        <result column="tab" property="tab"/>
+        <result column="createAt" property="createAt" javaType="java.util.Date"/>
+        <association property="author" javaType="cn.ifengkou.athena.model.User" resultMap="authorResultMap"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,title,content,authorId,top,good,isLock,replyCount,visitCount,collectCount,createAt,updateAt,lastReply,lastReplyAt,contentIsHtml,tab,deleted
+    </sql>
+
+    <select id="getCount" resultType="int" parameterType="String">
+        SELECT count(*) from Topic
+    </select>
+
+    <!--查询topics-->
+    <select id="queryAll" resultMap="ResultMap" parameterType="Object">
+        select t.id,t.title,t.content,t.authorId,t.top,t.good,t.replyCount,t.visitCount,t.collectCount,t.createAt,t.lastReplyAt,t.tab
+        ,u.loginName author_loginName ,u.avatar author_avatar
+        from Topic t, user u
+        where t.deleted =0 and t.authorid = u.id
+        <if test="authorId != null and authorId != ''">
+            and t.authorId = #{authorId}
+        </if>
+        <if test="tab != null and tab != '' and tab != 'all'">
+            and t.tab = #{tab}
+        </if>
+        <if test="topicIds != null and topicIds != ''">
+            and t.id IN
+            <foreach item="item" index="index" collection="topicIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 修改最后回复 -->
+    <update id="updateLastReply" parameterType="Object">
+        update Topic set lastReply=#{id},lastReplyAt=now() where id=#{id}
+    </update>
+
+    <!-- 修改最后回复 -->
+    <update id="reduceReplyCount" parameterType="long">
+        update Topic set replyCount=replyCount-1 where id=#{id}
+    </update>
+
+    <!--获取-->
+    <select id="getFullTopic" resultMap="ResultMap" parameterType="long">
+        select t.id,t.title,t.content,t.authorId,t.top,t.good,t.replyCount,t.visitCount,t.collectCount,t.createAt,t.lastReplyAt,t.tab
+        ,u.loginName author_loginName ,u.avatar author_avatar
+        from Topic t, user u where t.id=#{id} and t.deleted =0 and t.authorid = u.id
+    </select>
+
+    <!--获取-->
+    <select id="get" resultType="cn.ifengkou.athena.model.Topic" parameterType="long">
+        select <include refid="Base_Column_List"/>
+        from Topic where id=#{id}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        topic(id,title,content,authorId,createAt,contentIsHtml,tab)
+        values(#{id},#{title},#{content},#{authorId},now(),#{contentIsHtml},#{tab})
+    </insert>
+
+    <!--修改记录-->
+    <update id="update" parameterType="Object">
+        update Topic set title=#{title},content=#{content},tab=#{tab} where id=#{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="long">
+        update topic set deleted=1 where id=#{id}
+    </delete>
+</mapper>

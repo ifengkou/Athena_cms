@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Athena_cms.iml" filepath="$PROJECT_DIR$/Athena_cms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/athena-cms-common/athena-cms-common.iml" filepath="$PROJECT_DIR$/athena-cms-common/athena-cms-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/athena-cms-controller/athena-cms-controller.iml" filepath="$PROJECT_DIR$/athena-cms-controller/athena-cms-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/athena-cms-dal/athena-cms-dal.iml" filepath="$PROJECT_DIR$/athena-cms-dal/athena-cms-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/athena-cms-model/athena-cms-model.iml" filepath="$PROJECT_DIR$/athena-cms-model/athena-cms-model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/athena-cms-service/athena-cms-service.iml" filepath="$PROJECT_DIR$/athena-cms-service/athena-cms-service.iml" />
+    </modules>
+  </component>
+</project>

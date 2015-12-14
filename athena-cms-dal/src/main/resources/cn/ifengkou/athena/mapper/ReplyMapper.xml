@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.ReplyDao">
+
+    <resultMap id="authorResultMap" type="cn.ifengkou.athena.model.User">
+        <result column="author_loginName" property="loginName"/>
+        <result column="author_avatar" property="avatar"/>
+    </resultMap>
+
+    <resultMap id="ResultMap" type="cn.ifengkou.athena.model.Reply">
+        <result column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="authorId" property="authorId"/>
+        <result column="topicId" property="topicId"/>
+        <result column="createAt" property="createAt" javaType="java.util.Date"/>
+        <association property="author" javaType="cn.ifengkou.athena.model.User" resultMap="authorResultMap"/>
+        <!-- ofType指定students集合中的对象类型 -->
+        <!--<collection property="ups" ofType="cn.ifengkou.athena.model.Ups">
+            <result column="ups_id" property="id"/>
+            <result column="ups_replyId" property="replyId"/>
+            <result column="ups_userId" property="userId"/>
+        </collection>-->
+        <collection column="ups_id" property="upids" ofType="String">
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,content,topicId,authorId,createAt,updateAt,contentIsHtml,deleted
+    </sql>
+
+    <select id="getLastReplyByTopId" resultType="cn.ifengkou.athena.model.Reply" parameterType="Object">
+        SELECT r.id,r.content,r.topicid,r.authorId,r.createAt
+        ,u.loginName author_loginName ,u.avatar author_avatar
+        from reply r, user u where id=#{id} and deletes=0 and r.authorid = u.id limit 0,1
+    </select>
+
+    <select id="getRepliesByTopicId" resultMap="ResultMap" parameterType="Object">
+         SELECT r.id,r.content,r.topicid,r.authorId,r.createAt
+        ,u.loginName author_loginName ,u.avatar author_avatar
+        ,p.id ups_id,p.replyid ups_replyId,p.userid ups_userId
+        from reply r, user u,ups p where r.authorid = u.id and p.replyid = r.id and r.deleted=0 and r.topicid=#{topicId}
+    </select>
+
+    <select id="getRepliesByAuthorId" resultType="cn.ifengkou.athena.model.Reply" parameterType="Object">
+        SELECT <include refid="Base_Column_List"/>
+        from reply where authorId=#{id}
+    </select>
+
+    <select id="getFullReply" resultType="cn.ifengkou.athena.model.Reply" parameterType="Object">
+        SELECT r.id,r.content,r.topicId,r.authorId,r.createAt
+        ,u.loginName author_loginName ,u.avatar author_avatar
+        from reply r ,user u where r.authorid = u.id and r.deleted=0 and r.id=#{id}
+    </select>
+
+
+    <select id="get" resultType="cn.ifengkou.athena.model.Reply" parameterType="Object">
+        SELECT <include refid="Base_Column_List"/>
+        from reply where id=#{id}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        Reply(id,content,topicid,authorId,createAt,contentIsHtml)
+        values(#{id},#{content},#{topicId},#{authorId},now(),#{contentIsHtml})
+    </insert>
+
+    <!--更新记录-->
+    <update id="update" parameterType="Object">
+        update reply set content=#{content} where id=#{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="long">
+        delete from Reply where id=#{id}
+    </delete>
+</mapper>

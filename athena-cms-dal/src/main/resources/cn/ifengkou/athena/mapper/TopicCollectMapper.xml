@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.TopicCollectDao">
+    <sql id="Base_Column_List">
+        userId,topicId,createAt
+    </sql>
+    <resultMap id="userResultMap" type="cn.ifengkou.athena.model.User">
+        <result column="author_id" property="id"/>
+        <result column="author_loginName" property="loginName"/>
+        <result column="author_avatar" property="avatar"/>
+    </resultMap>
+
+    <resultMap id="topicResultMap" type="cn.ifengkou.athena.model.Topic">
+        <result column="topic_id" property="id"/>
+        <result column="topic_title" property="title"/>
+        <association property="author" javaType="cn.ifengkou.athena.model.User" resultMap="userResultMap"/>
+    </resultMap>
+
+    <resultMap id="ResultMap" type="cn.ifengkou.athena.model.TopicCollect">
+        <result column="userId" property="userId"/>
+        <result column="topicId" property="topicId"/>
+        <result column="createAt" property="createAt" javaType="java.util.Date"/>
+        <association property="topic" javaType="cn.ifengkou.athena.model.Topic" resultMap="topicResultMap"/>
+    </resultMap>
+
+
+    <select id="get" resultType="cn.ifengkou.athena.model.TopicCollect" parameterType="Object">
+        SELECT <include refid="Base_Column_List"/>
+        from TopicCollect where userId=#{userId} and topicId=#{topicId}
+    </select>
+
+    <select id="getTopicCollectsByUserId" resultMap="ResultMap" parameterType="long">
+        select m.userId,m.topicId,m.createAt
+        ,t.id as topic_id,t.title as topic_title
+        ,u.id as author_id,u.loginName as author_loginName,u.avatar author_avatar
+        from TopicCollect m,topic t,user u
+        where m.userid=#{userId} and m.topicid = t.id and t.authorid = u.id
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        TopicCollect(userId,topicId,createAt)
+        values(#{userId},#{topicId},now())
+    </insert>
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="long">
+        delete from TopicCollect where userId=#{userId} and topicId=#{topicId}
+    </delete>
+</mapper>

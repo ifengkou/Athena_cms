@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ifengkou.athena.dao.UserDao">
+    <resultMap id="userResultMap" type="cn.ifengkou.athena.model.User">
+        <id column="user_id" property="id"  />
+        <result column="name" property="name"/>
+        <result column="loginName" property="loginName"/>
+        <result column="email" property="email"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,loginName,pass,email,url,profileImageUrl,location,signature,profile,weibo
+        ,avatar,githubId,githubUserName,githubAccessToken,isBlock,score,topicCount,replyCount
+        ,followCount,collectTagCount,collectTopicCount,createAt,updateAt,isStar
+        ,"level",active,receiveReplyMail,receiveAtMail,fromWp,retrieveTime,retrieveKey,accessToken
+    </sql>
+
+    <sql id="Simple_Column_List">
+        id,name,profileImageUrl,avatar,githubUserName,score,createAt,updateAt,level
+    </sql>
+
+    <!--<select id="getUserByLoginName" resultType="cn.ifengkou.athena.model.User" parameterType="String">
+        select <include refid="Simple_Column_List"/>
+        from USER
+        where loginName = #{loginName}
+    </select>-->
+
+    <select id="getUserByLoginName" resultType="cn.ifengkou.athena.model.User" parameterType="String">
+        select <include refid="Base_Column_List"/>
+        from USER
+        where loginName = #{loginName}
+    </select>
+
+    <select id="getUserByMail" resultType="cn.ifengkou.athena.model.User" parameterType="String">
+        select <include refid="Simple_Column_List"/>
+        from USER
+        where mail = #{mail} limit 0,1
+    </select>
+
+    <select id="getUserByAccessToken" resultType="cn.ifengkou.athena.model.User" parameterType="String">
+        select <include refid="Simple_Column_List"/>
+        from USER
+        where accesstoken = #{accesstoken}
+    </select>
+
+    <select id="getUsersByIds" resultType="cn.ifengkou.athena.model.User" parameterType="map">
+        select <include refid="Simple_Column_List"/>
+        from USER
+        where ids IN
+        <foreach item="item" index="index" collection="IDS" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="get" resultType="cn.ifengkou.athena.model.User" parameterType="long">
+        select <include refid="Base_Column_List"/>
+        from USER
+        where id = #{id}
+    </select>
+
+
+
+    <!-- 插入记录 -->
+    <insert id="add" parameterType="Object">
+        insert into
+        USER(id,name,loginName,pass,email,avatar,active,accessToken)
+        values(#{id},#{loginName},#{loginName},#{pass},#{email},#{avatar},#{active},#{accessToken})
+    </insert>
+
+    <!-- 根据主键修改记录 -->
+    <update id="update" parameterType="Object">
+            update USER set email=#{email},avatar=#{avatar} where id=#{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="long">
+            delete from USER where id= #{id}
+    </delete>
+</mapper>
