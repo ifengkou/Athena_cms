@@ -19,7 +19,7 @@ tomcat下载，解压到本地，启动
 
 ##配置##
 - 登录mysql，新建数据库athena_cms,执行 [crebas.sql](/doc/crebas.sql)，新建用户，分配数据库权限
-- 修改数据库访问参数，[config.properties](/athena-cms/controller/src/main/resources/data/config.properties)
+- 修改数据库访问参数，[config.properties](/athena-cms-controller/src/main/resources/data/config.properties)
 
 ##运行##
 
@@ -35,7 +35,9 @@ tomcat下载，解压到本地，启动
 
 ##贡献##
 
-有任何意见或建议都欢迎提 issue，或者直接提给 @alsotang
+有任何意见或建议都欢迎提 issue，或者直接提给 @ifengkou
 
 ##License##
 MIT
+
+athena-cms-controller/src/main/resources/data/config.properties
