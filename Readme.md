@@ -39,5 +39,3 @@ tomcat下载，解压到本地，启动
 
 ##License##
 MIT
-
-athena-cms-controller/src/main/resources/data/config.properties
